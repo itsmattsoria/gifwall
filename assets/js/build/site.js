@@ -7,12 +7,28 @@ return b?(parseFloat(Sa(a,"marginLeft"))||(n.contains(a.ownerDocument,a)?a.getBo
 var Main = (function($) {
 
   var $document,
-      loadingTimer;
+      apiUrl,
+      gifs = [],
+      limit = 100,
+      size = 'downsized', // Options: original (largetst), downsized_large, downsized
+      $rotator,
+      $img,
+      $controls,
+      $controlsClose,
+      $controlsForm;
 
   function _init() {
     // Cache some common DOM queries
     $document = $(document);
     $('body').addClass('loaded');
+    $rotator = $('.rotator');
+    $controls = $('.controls');
+    $controlsClose = $controls.find('.close');
+    $controlsForm = $('#controlsForm');
+
+    // Add a blank img to the rotator
+    $rotator.append('<img src="" class="hidden">');
+    $img = $rotator.find('img');
 
     // Init functions
     _initControls();
@@ -20,82 +36,54 @@ var Main = (function($) {
     // Esc handlers
     $(document).keyup(function(e) {
       if (e.keyCode === 27) {
-
+        // Close Controls
+        hideControls();
       }
     });
 
   } // end init()
 
+  // Pick a random gif from the array and replace the img src
+  function gifRotation() {
+    var randomGif = Math.floor(Math.random() * gifs.length - 1 ) + 1;
+    $img.attr('src', gifs[randomGif]);
+  }
+
+  // Add a loading spinner
+  function showSpinner() {
+    $rotator.prepend('<div class="spinner"></div>');
+  }
+  // Get rid of it!
+  function hideSpinner() {
+    $('.spinner').remove();
+  }
+
+  // Put together the api url
+  function buildApiUrl(searchTerm, rating) {    
+    apiUrl = 'https://api.giphy.com/v1/gifs/search?q=' + searchTerm + '&limit=' + limit + '&rating=' + rating + '&api_key=5nOwP2xmE5kzeVezjD6x9Yj1IfHs1PH5';
+    return apiUrl;
+  }
+  
+  // Use the giphy api to build the array of gifs
+  function buildGifsArray(apiUrl) {
+    showSpinner();
+    // Empty out the gifs array
+    gifs = [];
+    // Call the API
+    $.get(apiUrl, function() {
+    }).done(function(response) {
+      hideSpinner();
+      for (var i = 1;i <= response.data.length - 1;i++) {
+        gifs.push(response.data[i]["images"][size]["url"]);
+      }
+    });
+  }
+
   function _initControls() {
     
-    // Setup some vars
-    var apiUrl,
-        gifs = [],
-        limit = 100,
-        size = 'downsized', // Options: original (largetst), downsized_large, downsized
-        $rotator = $('.rotator'),
-        $controls = $('.controls'),
-        $controlsClose = $controls.find('.close'),
-        $controlsForm = $('#controlsForm');
-    
-    // Add a blank img to the rotator
-    $rotator.append('<img src="" class="hidden">');
-    var $img = $rotator.find('img');
-    // Pick a random gif from the array and replace the img src
-    function gifRotation() {
-      var randomGif = Math.floor(Math.random() * gifs.length - 1 ) + 1;
-      $img.attr('src', gifs[randomGif]);
-    }
-    
-    // Add a loading spinner
-    function showSpinner() {
-      $rotator.prepend('<div class="spinner"></div>');
-    }
-    // Get rid of it!
-    function hideSpinner() {
-      $('.spinner').remove();
-    }
-    
-    // Put together the api url
-    function buildApiUrl(searchTerm, rating) {    
-      apiUrl = 'https://api.giphy.com/v1/gifs/search?q=' + searchTerm + '&limit=' + limit + '&rating=' + rating + '&api_key=5nOwP2xmE5kzeVezjD6x9Yj1IfHs1PH5';
-      return apiUrl;
-    }
-    
-    // Use the giphy api to build the array of gifs
-    function buildGifsArray(apiUrl) {
-      showSpinner();
-      // Empty out the gifs array
-      gifs = [];
-      // Call the API
-      $.get(apiUrl, function() {
-      }).done(function(response) {
-        hideSpinner();
-        for (var i = 1;i <= response.data.length - 1;i++) {
-          gifs.push(response.data[i]["images"][size]["url"]);
-        }
-      });
-    }
-    
-    // Controls
-    function toggleControls() {
-      $controls.toggleClass('-active');
-    }
-    function showControls() {
-      $controls.addClass('-active');
-    }
-    function hideControls() {
-      $controls.removeClass('-active');
-    }
     // Close it up:
     $controlsClose.on('click', function() {
       hideControls();
-    });
-    // Close when hitting the esc key too!
-    $(document).keyup(function(e) {
-      if (e.keyCode === 27) {
-        hideControls();
-      }
     });
     // Open the controls when you click anywhere
     $(document).on('click', function(e) {
@@ -144,6 +132,17 @@ var Main = (function($) {
       hideControls();
     });
 
+  }
+
+  // Controls
+  function toggleControls() {
+    $controls.toggleClass('-active');
+  }
+  function showControls() {
+    $controls.addClass('-active');
+  }
+  function hideControls() {
+    $controls.removeClass('-active');
   }
 
   // Track ajax pages in Analytics
