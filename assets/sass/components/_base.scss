@@ -1,0 +1,283 @@
+//base styles
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  background: $black;
+  box-sizing: border-box;
+  font-family: 'Space Mono', monospace;
+  &.loaded {
+    .rotator {
+      opacity: 1;
+    }
+  }
+}
+
+.hidden {
+  width: 0;
+  height: 0;
+  z-index: -1;
+  position: absolute;
+  visibility: hidden;
+}
+
+.rotator {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  background: rgba(0,0,0,.1);
+  transition: opacity .2s ease-out;
+  img {
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  
+  // Natural ratio layout
+  &.natural-ratio {
+    img {
+      top: auto;
+      left: 50%;
+      width: auto;
+      height: 100%;
+      min-width: 1px;
+      position: relative;
+      transform: translateX(-50%);
+    }
+  }
+}
+
+// Controls
+.controls {
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  width: 400px;
+  maring: 20px;
+  padding: 20px;
+  max-width: 100%;
+  position: absolute;
+  background: #efefef;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity .2s ease-out;
+  border: 2px solid $black-translucent;
+  &.-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  header {
+    position: relative;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid $black-translucent;
+  }
+  
+  p {
+    color: $gray;
+    margin-top: 0;
+    font-size: 12px;
+  }
+  
+  .close {
+    float: right;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    background: none;
+    color: $gray-light;
+    font-family: inherit;
+    &:hover {
+      color: $gray-dark;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  h1,
+  h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-block;
+  }
+  h1 {
+    color: $gray-dark;
+  }
+  h2 {
+    color: $gray-light;
+  }
+  h3 {
+    font-size: 14px;
+  }
+  
+  .midrow {
+    @include clearfix;
+    > div {
+      width: 25%;
+      float: left;
+    }
+    > input {
+      width: 75%;
+      float: left;
+    }
+  }
+}
+
+form {
+  margin-top: 20px;
+  > div {
+    margin-top: 20px;
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: rgba(0,0,0,.7);
+  }
+  button {
+    color: white;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: 700;
+    padding: 10px 20px;
+    background: $green;
+    font-family: inherit;
+    transition: background .2s ease-out;
+    border: 2px solid $black-translucent;
+    &:focus,
+    &:hover {
+      outline: none;
+      background: darken($green, 20%);
+    }
+  }
+}
+
+input {
+  width: 100%;
+  display: block;
+  font-size: 14px;
+  font-family: inherit;
+  &[type="text"] {
+    padding: 10px;
+    border-radius: 0;
+    border: 2px solid $black-translucent;
+    &:focus {
+      outline: none;
+      border-color: $green;
+    }
+  }
+}
+select {
+  font-size: 14px;
+  border-radius: 0;
+  font-family: inherit;
+  display: inline-block;
+  -webkit-appearance: none;
+  padding: 10px 40px 10px 10px;
+  border: 2px solid $black-translucent;
+  &:focus {
+    outline: none;
+    border-color: $green;
+  }
+}
+.select-wrap {
+  position: relative;
+  display: inline-block;
+  &::before {
+    top: 2px;
+    z-index: 0;
+    right: 2px;
+    bottom: 2px;
+    content: '';
+    width: 30px;
+    background: #fff;
+    position: absolute;
+    pointer-events: none;
+  }
+  &::after {
+    top: 2px;
+    z-index: 1;
+    right: 5px;
+    bottom: 1px;
+    content: '❮';
+    position: absolute;
+    pointer-events: none;
+    transform: rotate(-90deg);
+  }
+}
+.radio-wrap {
+  label,
+  input {
+    width: auto;
+    cursor: pointer;
+    display: inline-block;
+  }
+}
+
+.powered-by-giphy {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid $black-translucent;
+  a {
+    opacity: .7;
+    overflow: hidden;
+    display: inline-block;
+    transition: opacity .2s ease-out;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  img {
+    left: -6px;
+    position: relative;
+    vertical-align: top;
+  }
+}
+
+// Loading Spinner
+.spinner {
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: absolute;
+  margin: -25px 0 0 -25px;
+  border-top: 3px solid $green;
+  border-left: 3px solid $green;
+  animation: spin .5s forwards infinite linear;
+}
+
+// Spinning animation
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

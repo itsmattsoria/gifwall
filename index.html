@@ -1,0 +1,89 @@
+<!doctype html>
+<!--[if IE 8]> <html lang="en" class="no-js ie8 lt-ie9 lt-ie10"> <![endif]-->
+<!--[if IE 9 ]> <html lang="en" class="no-js ie9 lt-ie10"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>GifWall</title>
+    <link rel="canonical" href="">
+    <meta name="description" content="">
+    <meta property="og:title" content="" />
+    <meta property="og:image" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:description" content="" />
+    <link rel="stylesheet" href="assets/css/main.min.css">
+    <link type="text/plain" rel="author" href="humans.txt">
+    <link rel="shortcut icon" type="image/ico" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="assets/images/apple-touch-icon-152x152-precomposed.png"><!-- For iStuff -->
+    <meta name="msapplication-TileColor" content="#FFFFFF"><!-- For MS stuff -->
+    <meta name="msapplication-TileImage" content="assets/images/ms-icon.png"><!-- For MS stuff -->
+    <link href="https://fonts.googleapis.com/css?family=Space+Mono:400,700" rel="stylesheet">
+    <script src="assets/js/no-build/modernizr.custom.js"></script>
+  </head>
+  <body>
+
+    <div class="rotator"></div>
+
+    <div class="controls -active">
+      <header>
+        <h1>Gif Wall</h1>
+        <h2>Controls</h2>
+        <button class="close">close</button>
+      </header>
+      <p>Set the vibe at your party or gathering — bust out the projector and pull this baby up, go full-screen and let 'er rip!</p>
+      <p><em>After closing, click anywhere on the page to re-open the controls</em></p>
+      <form id="controlsForm">
+        <div>
+          <label for="searchTerm">search term:</label>
+          <input type="text" id="searchTerm" name="searchTerm" placeholder="ex: 'glitch art'">
+        </div>
+        <div>
+          <label for="rating" class="select-label">rating:</label>
+          <div class="select-wrap">
+            <select name="rating" id="rating">
+              <option value="g">g</option>
+              <option value="pg">pg</option>
+              <option value="pg13">pg13</option>
+              <option value="r">r</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="delayTime">interval time:</label>
+          <input type="text" id="delayTime" name="delayTime" placeholder="in seconds, ex: '3.5'" />
+        </div>
+        <div>
+          <h3>layout:</h3>
+          <div class="radio-wrap">
+            <label for="fullscreen">fullscreen</label>
+            <input id="fullscreen" name="layout" type="radio" value="fullscreen" checked="checked" />
+          </div>
+          <div class="radio-wrap">
+            <label for="naturalRatio">natural ratio</label>
+            <input id="naturalRatio" name="layout" type="radio" value="natural-ratio" />
+          </div>
+        </div>
+        <div>
+          <button type="submit">let's do this!</button>
+        </div>
+      </form>
+      <div class="powered-by-giphy">
+        <a href="http://giphy.com" target="_blank"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/26344/PoweredBy_200px-White_HorizText.png" alt="Powered by Giphy.com"></a>
+      </div>
+    </div>
+
+    <script src="assets/js/build/site.min.js"></script>
+    <script type="text/javascript">// Google Analytics
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXX-X']); // Replace "XXXXX-X" with your account code
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </body>
+</html>
