@@ -3,7 +3,7 @@ var Main = (function($) {
   var $document,
       apiUrl,
       gifs = [],
-      limit = 20,
+      limit = 100,
       size = 'downsized', // Options: original (largetst), downsized_large, downsized
       loadCount = 3,
       $rotator,
