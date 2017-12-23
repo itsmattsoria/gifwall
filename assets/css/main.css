@@ -454,6 +454,7 @@ body.loaded .rotator {
   width: 100%;
   padding: 20px;
   max-width: 400px;
+  position: relative;
   background: #efefef;
   pointer-events: none;
   transition: opacity .2s ease-out;
@@ -461,6 +462,7 @@ body.loaded .rotator {
 }
 .controls.-active {
   opacity: 1;
+  z-index: 5;
   pointer-events: auto;
 }
 @media screen and (min-width: 480px) {

@@ -87,12 +87,14 @@ body {
   width: 100%;
   padding: 20px;
   max-width: 400px;
+  position: relative;
   background: #efefef;
   pointer-events: none;
   transition: opacity .2s ease-out;
   border: 2px solid $black-translucent;
   &.-active {
     opacity: 1;
+    z-index: 5;
     pointer-events: auto;
   }
 
