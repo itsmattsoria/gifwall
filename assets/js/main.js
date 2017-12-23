@@ -3,7 +3,7 @@ var Main = (function($) {
   var $document,
       apiUrl,
       gifs = [],
-      limit = 100,
+      limit = 20,
       size = 'downsized', // Options: original (largetst), downsized_large, downsized
       loadCount = 3,
       $rotator,
@@ -101,7 +101,7 @@ var Main = (function($) {
       $staging = $('#'+termId);
       stagingImages = new imagesLoaded($staging);
       stagingImages.on('progress', function(imgLoad, image) {
-        console.log(searchTerm);
+        console.log(imgLoad,searchTerm);
         $(image.img).appendTo($rotator);
         // Wait until at least X images are loaded
         if (imgLoad.progressedCount === loadCount) {
@@ -110,8 +110,9 @@ var Main = (function($) {
           hideSpinner();
           $rotator.removeClass('-loading');
         }
-      }).on('fail', function() {
-        $rotator.find('img').remove();
+      }).on('fail', function(instance) {
+        $rotator.find('img[data-term="'+searchTerm+'"]').remove();
+        return;
       });
     });
   }
@@ -196,6 +197,7 @@ var Main = (function($) {
   }
   function showControls() {
     $controls.addClass('-active');
+    $controls.find('input').first().focus();
   }
   function hideControls() {
     $controls.removeClass('-active');
