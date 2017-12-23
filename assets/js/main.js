@@ -5,8 +5,9 @@ var Main = (function($) {
       gifs = [],
       limit = 100,
       size = 'downsized', // Options: original (largetst), downsized_large, downsized
+      loadCount = 3,
       $rotator,
-      $img,
+      stagingImages,
       $controls,
       $controlsClose,
       $controlsForm;
@@ -19,13 +20,10 @@ var Main = (function($) {
     $controls = $('.controls');
     $controlsClose = $controls.find('.close');
     $controlsForm = $('#controlsForm');
-
-    // Add a blank img to the rotator
-    $rotator.append('<img src="" class="hidden">');
-    $img = $rotator.find('img');
+    stagingImages = imagesLoaded('.staging');
 
     // Init functions
-    _initControls();
+    initControls();
 
     // Esc handlers
     $(document).keyup(function(e) {
@@ -37,10 +35,37 @@ var Main = (function($) {
 
   } // end init()
 
+  function toggleFullScreen() {
+    // full-screen available?
+    if (
+      document.fullscreenEnabled || 
+      document.webkitFullscreenEnabled || 
+      document.mozFullScreenEnabled ||
+      document.msFullscreenEnabled
+    ) {
+      // go full-screen
+      if ($document.requestFullscreen) {
+        $document.requestFullscreen();
+      } else if ($document.webkitRequestFullscreen) {
+        $document.webkitRequestFullscreen();
+      } else if ($document.mozRequestFullScreen) {
+        $document.mozRequestFullScreen();
+      } else if ($document.msRequestFullscreen) {
+        $document.msRequestFullscreen();
+      }
+    }
+  }
+
   // Pick a random gif from the array and replace the img src
   function gifRotation() {
-    var randomGif = Math.floor(Math.random() * gifs.length - 1 ) + 1;
-    $img.attr('src', gifs[randomGif]);
+    var $gifs = $rotator.find('img');
+    var randomGif = Math.floor(Math.random() * $gifs.length - 1 ) + 1;
+    $rotator.find('img.current').removeClass('current');
+    $gifs.eq(randomGif).addClass('current');
+  }
+
+  function runRotator(delayTime) {
+    setInterval(gifRotation, delayTime);
   }
 
   // Add a loading spinner
@@ -57,23 +82,56 @@ var Main = (function($) {
     apiUrl = 'https://api.giphy.com/v1/gifs/search?q=' + searchTerm + '&limit=' + limit + '&rating=' + rating + '&api_key=5nOwP2xmE5kzeVezjD6x9Yj1IfHs1PH5';
     return apiUrl;
   }
-  
+
   // Use the giphy api to build the array of gifs
-  function buildGifsArray(apiUrl) {
+  function buildGifsArray(apiUrl, searchTerm, delayTime) {
     showSpinner();
+    $rotator.addClass('-loading');
     // Empty out the gifs array
     gifs = [];
     // Call the API
     $.get(apiUrl, function() {
     }).done(function(response) {
-      hideSpinner();
       for (var i = 1;i <= response.data.length - 1;i++) {
-        gifs.push(response.data[i]["images"][size]["url"]);
+        gifs.push(response.data[i].images[size].url);
       }
+      gifs.sort(function() { return 0.5 - Math.random(); });
+      appendNewGifs(gifs, searchTerm);
+      var termId = searchTerm.replace('+', '');
+      $staging = $('#'+termId);
+      stagingImages = new imagesLoaded($staging);
+      stagingImages.on('progress', function(imgLoad, image) {
+        console.log(searchTerm);
+        $(image.img).appendTo($rotator);
+        // Wait until at least X images are loaded
+        if (imgLoad.progressedCount === loadCount) {
+          // Run the rotator!
+          runRotator(delayTime);
+          hideSpinner();
+          $rotator.removeClass('-loading');
+        }
+      }).on('fail', function() {
+        $rotator.find('img').remove();
+      });
     });
   }
 
-  function _initControls() {
+  function appendNewGifs(gifs, searchTerm) {
+    for (i=0;i<gifs.length;i++) {
+      var firstGif = '';
+      if (i===0) {
+        firstGif = ' class="current"';
+      }
+      $('.staging').append('<img src="'+gifs[i]+'"'+firstGif+' data-term="'+searchTerm+'">');
+    }
+  }
+
+  function buildRotator(searchTerm, rating, delayTime) {
+    var apiUrl = buildApiUrl(searchTerm, rating);
+    buildGifsArray(apiUrl, searchTerm, delayTime);
+  }
+
+  function initControls() {
     
     // Close it up:
     $controlsClose.on('click', function() {
@@ -90,14 +148,14 @@ var Main = (function($) {
       e.preventDefault();
       var data = $(this).serializeArray();
       
-      var searchTerm = data[0]['value'],
-          rating = data[1]['value'],
-          delayTime = data[2]['value'],
-          layout = data[3]['value'];
+      var searchTerm = data[0].value,
+          rating = data[1].value,
+          delayTime = data[2].value,
+          layout = data[3].value;
       
       // Replace spaces with '+' for the giphy API
       searchTerm = searchTerm.split(' ').join('+');
-      
+
       // Defaults
       if (delayTime === '') { 
         delayTime = 3500; 
@@ -114,16 +172,20 @@ var Main = (function($) {
       } else if (layout === 'fullscreen') {
         $rotator.removeClass('natural-ratio');
       }
-      
+
+      var termId = searchTerm.replace('+', '');
+
       // Fire it up!
-      $img.removeClass('hidden');
-      var apiUrl = buildApiUrl(searchTerm, rating);
-      buildGifsArray(apiUrl);
-      gifRotation();
-      setInterval(gifRotation, delayTime);
+      $('.staging img').attr('src', '');
+      $('.staging').remove();
+      $('body').prepend('<div class="staging hidden" id="'+termId+'"></div>');
+      $rotator.empty();
+      buildRotator(searchTerm, rating, delayTime);
       
       // Hide the controls
       hideControls();
+      // Go fullscreen
+      toggleFullScreen();
     });
 
   }

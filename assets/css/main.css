@@ -423,6 +423,10 @@ body.loaded .rotator {
   position: absolute;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
+  visibility: hidden;
+}
+.rotator img.current {
+  visibility: visible;
 }
 .rotator.natural-ratio img {
   top: auto;
@@ -433,6 +437,16 @@ body.loaded .rotator {
   position: relative;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
+}
+.rotator.-loading::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  content: '';
+  position: absolute;
+  background: rgba(170, 170, 170, 0.5);
 }
 
 .controls {

@@ -48,6 +48,10 @@ body {
     min-height: 100%;
     position: absolute;
     transform: translate(-50%, -50%);
+    visibility: hidden;
+    &.current {
+      visibility: visible;
+    }
   }
   
   // Natural ratio layout
@@ -60,6 +64,19 @@ body {
       min-width: 1px;
       position: relative;
       transform: translateX(-50%);
+    }
+  }
+
+  &.-loading {
+    &::before {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      content: '';
+      position: absolute;
+      background: $gray-translucent;
     }
   }
 }
