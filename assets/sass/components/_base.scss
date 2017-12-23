@@ -13,6 +13,7 @@ html {
 
 body {
   height: 100%;
+  padding: 20px;
   background: $black;
   box-sizing: border-box;
   font-family: 'Space Mono', monospace;
@@ -82,22 +83,24 @@ body {
 
 // Controls
 .controls {
-  top: 50%;
-  left: 50%;
   opacity: 0;
-  width: 400px;
-  maring: 20px;
+  width: 100%;
   padding: 20px;
-  max-width: 100%;
-  position: absolute;
+  max-width: 400px;
   background: #efefef;
   pointer-events: none;
-  transform: translate(-50%, -50%);
   transition: opacity .2s ease-out;
   border: 2px solid $black-translucent;
   &.-active {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  @include media-sm {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
   }
   
   header {

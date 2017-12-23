@@ -388,6 +388,7 @@ html {
 
 body {
   height: 100%;
+  padding: 20px;
   background: #222;
   box-sizing: border-box;
   font-family: 'Space Mono', monospace;
@@ -449,24 +450,27 @@ body.loaded .rotator {
 }
 
 .controls {
-  top: 50%;
-  left: 50%;
   opacity: 0;
-  width: 400px;
-  maring: 20px;
+  width: 100%;
   padding: 20px;
-  max-width: 100%;
-  position: absolute;
+  max-width: 400px;
   background: #efefef;
   pointer-events: none;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
   transition: opacity .2s ease-out;
   border: 2px solid rgba(0, 0, 0, 0.2);
 }
 .controls.-active {
   opacity: 1;
   pointer-events: auto;
+}
+@media screen and (min-width: 480px) {
+  .controls {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+  }
 }
 .controls header {
   position: relative;
