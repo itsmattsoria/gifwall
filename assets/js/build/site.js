@@ -34,7 +34,6 @@ var Main = (function($) {
     $controls = $('.controls');
     $controlsClose = $controls.find('.close');
     $controlsForm = $('#controlsForm');
-    stagingImages = imagesLoaded('.staging');
 
     // Testing
     // testing = true;
@@ -89,6 +88,7 @@ var Main = (function($) {
     var randomGif = Math.floor(Math.random() * $gifs.length - 1 ) + 1;
     $rotator.find('img.current').removeClass('current');
     $gifs.eq(randomGif).addClass('current');
+    console.log('poopface');
   }
 
   function runRotator(delayTime) {
@@ -145,6 +145,8 @@ var Main = (function($) {
   }
 
   function appendNewGifs(gifs, searchTerm) {
+    // var termId = searchTerm.replace('+', '');
+    // $staging = $('#'+termId);
     for (i=0;i<gifs.length;i++) {
       var firstGif = '';
       if (i===0) {
@@ -206,6 +208,7 @@ var Main = (function($) {
       var termId = searchTerm.replace('+', '');
 
       // Fire it up!
+      window.stop();
       $('.staging img').attr('src', '');
       $('.staging').remove();
       $('body').prepend('<div class="staging hidden" id="'+termId+'"></div>');
