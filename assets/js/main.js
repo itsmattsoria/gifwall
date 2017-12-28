@@ -10,7 +10,8 @@ var Main = (function($) {
       stagingImages,
       $controls,
       $controlsClose,
-      $controlsForm;
+      $controlsForm
+      testing = false;
 
   function _init() {
     // Cache some common DOM queries
@@ -21,6 +22,12 @@ var Main = (function($) {
     $controlsClose = $controls.find('.close');
     $controlsForm = $('#controlsForm');
     stagingImages = imagesLoaded('.staging');
+
+    // Testing
+    // testing = true;
+    if (testing === true) {
+      $('body').addClass('testing');
+    }
 
     // Init functions
     initControls();
@@ -35,25 +42,32 @@ var Main = (function($) {
 
   } // end init()
 
-  function toggleFullScreen() {
-    // full-screen available?
-    if (
-      document.fullscreenEnabled || 
-      document.webkitFullscreenEnabled || 
-      document.mozFullScreenEnabled ||
-      document.msFullscreenEnabled
-    ) {
-      // go full-screen
-      if ($document.requestFullscreen) {
-        $document.requestFullscreen();
-      } else if ($document.webkitRequestFullscreen) {
-        $document.webkitRequestFullscreen();
-      } else if ($document.mozRequestFullScreen) {
-        $document.mozRequestFullScreen();
-      } else if ($document.msRequestFullscreen) {
-        $document.msRequestFullscreen();
+  function enterFullScreen(elem) {
+    elem = elem || document.documentElement;
+    if (!document.fullscreenElement && !document.mozFullScreenElement &&
+      !document.webkitFullscreenElement && !document.msFullscreenElement) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
       }
     }
+  }
+
+  function exitFullScreen(elem) {
+     if (document.exitFullscreen) {
+       document.exitFullscreen();
+     } else if (document.msExitFullscreen) {
+       document.msExitFullscreen();
+     } else if (document.mozCancelFullScreen) {
+       document.mozCancelFullScreen();
+     } else if (document.webkitExitFullscreen) {
+       document.webkitExitFullscreen();
+     }
   }
 
   // Pick a random gif from the array and replace the img src
@@ -99,7 +113,7 @@ var Main = (function($) {
       appendNewGifs(gifs, searchTerm);
       var termId = searchTerm.replace('+', '');
       $staging = $('#'+termId);
-      stagingImages = new imagesLoaded($staging);
+      stagingImages = imagesLoaded($staging);
       stagingImages.on('progress', function(imgLoad, image) {
         console.log(imgLoad,searchTerm);
         $(image.img).appendTo($rotator);
@@ -153,6 +167,8 @@ var Main = (function($) {
           rating = data[1].value,
           delayTime = data[2].value,
           layout = data[3].value;
+
+      var fullscreen = data.length === 5;
       
       // Replace spaces with '+' for the giphy API
       searchTerm = searchTerm.split(' ').join('+');
@@ -170,7 +186,7 @@ var Main = (function($) {
       // if natural ratio layout is chosen
       if (layout === 'natural-ratio') {
         $rotator.addClass('natural-ratio');
-      } else if (layout === 'fullscreen') {
+      } else if (layout === 'fillscreen') {
         $rotator.removeClass('natural-ratio');
       }
 
@@ -185,8 +201,12 @@ var Main = (function($) {
       
       // Hide the controls
       hideControls();
-      // Go fullscreen
-      toggleFullScreen();
+      // Toggle fullscreen mode
+      if (fullscreen === true) {
+        enterFullScreen();
+      } else {
+        exitFullScreen();
+      }
     });
 
   }

@@ -302,3 +302,21 @@ select {
     transform: rotate(360deg);
   }
 }
+
+// Testing
+.testing {
+  .staging.hidden {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+    visibility: visible;
+    > * {
+      flex-basis: 10%;
+    }
+  }
+}

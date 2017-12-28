@@ -56,15 +56,19 @@
           <input type="text" id="delayTime" name="delayTime" placeholder="in seconds, ex: '3.5'" />
         </div>
         <div>
-          <h3>layout:</h3>
+          <h3>image size:</h3>
           <div class="radio-wrap">
-            <label for="fullscreen">fullscreen</label>
-            <input id="fullscreen" name="layout" type="radio" value="fullscreen" checked="checked" />
+            <label for="fillscreen">fill screen</label>
+            <input id="fillscreen" name="layout" type="radio" value="fillscreen" checked="checked" />
           </div>
           <div class="radio-wrap">
             <label for="naturalRatio">natural ratio</label>
             <input id="naturalRatio" name="layout" type="radio" value="natural-ratio" />
           </div>
+        </div>
+        <div class="radio-wrap">
+          <label for="fullscreen">enter fullscreen mode?</label>
+          <input type="checkbox" id="fullscreen" name="fullscreen" checked="checked">
         </div>
         <div>
           <button type="submit">let's do this!</button>
