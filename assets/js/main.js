@@ -10,7 +10,8 @@ var Main = (function($) {
       stagingImages,
       $controls,
       $controlsClose,
-      $controlsForm
+      $controlsForm,
+      interval,
       testing = false;
 
   function _init() {
@@ -75,11 +76,10 @@ var Main = (function($) {
     var randomGif = Math.floor(Math.random() * $gifs.length - 1 ) + 1;
     $rotator.find('img.current').removeClass('current');
     $gifs.eq(randomGif).addClass('current');
-    console.log('poopface');
   }
 
   function runRotator(delayTime) {
-    setInterval(gifRotation, delayTime);
+    interval = setInterval(gifRotation, delayTime);
   }
 
   // Add a loading spinner
@@ -111,11 +111,10 @@ var Main = (function($) {
       }
       gifs.sort(function() { return 0.5 - Math.random(); });
       appendNewGifs(gifs, searchTerm);
-      var termId = searchTerm.replace('+', '');
+      var termId = searchTerm.replace(/\+/g, '');
       $staging = $('#'+termId);
       stagingImages = imagesLoaded($staging);
       stagingImages.on('progress', function(imgLoad, image) {
-        console.log(imgLoad,searchTerm);
         $(image.img).appendTo($rotator);
         // Wait until at least X images are loaded
         if (imgLoad.progressedCount === loadCount) {
@@ -132,8 +131,6 @@ var Main = (function($) {
   }
 
   function appendNewGifs(gifs, searchTerm) {
-    // var termId = searchTerm.replace('+', '');
-    // $staging = $('#'+termId);
     for (i=0;i<gifs.length;i++) {
       var firstGif = '';
       if (i===0) {
@@ -180,7 +177,7 @@ var Main = (function($) {
         delayTime = 3500; 
       } else {      
         // Convert seconds to milliseconds
-        delayTime = delayTime * 1000;
+        delayTime *= 1000;
       }
       if (searchTerm === '') { searchTerm = 'glitch+art'; }
       if (rating === '') { rating = 'pg'; }
@@ -192,11 +189,11 @@ var Main = (function($) {
         $rotator.removeClass('natural-ratio');
       }
 
-      var termId = searchTerm.replace('+', '');
+      var termId = searchTerm.replace(/\+/g, '');
 
       // Fire it up!
       window.stop();
-      $('.staging img').attr('src', '');
+      clearInterval(interval);
       $('.staging').remove();
       $('body').prepend('<div class="staging hidden" id="'+termId+'"></div>');
       $rotator.empty();
