@@ -29,6 +29,17 @@ var Main = (function($) {
       $('body').addClass('testing');
     }
 
+    // Get Search Terms form URL
+    var urlSearch = window.location.search;
+    if (urlSearch) {
+      hideControls();
+      var searchTerm = urlSearch.replace('?', '');
+      var termId = searchTerm.replace(/\+/g, '');
+      // Fire it up!
+      $('body').prepend('<div class="staging hidden" id="'+termId+'"></div>');
+      buildRotator(searchTerm, 'pg', 3500);
+    }
+
     // Init functions
     initControls();
 
