@@ -422,8 +422,7 @@ body.loaded .rotator {
   min-width: 100%;
   min-height: 100%;
   position: absolute;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   visibility: hidden;
 }
 .rotator img.current {
@@ -435,8 +434,7 @@ body.loaded .rotator {
   width: auto;
   height: 100%;
   min-width: 1px;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 .rotator.-loading::before {
   top: 0;
@@ -470,8 +468,7 @@ body.loaded .rotator {
     top: 50%;
     left: 50%;
     position: absolute;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
   }
 }
 .controls header {
@@ -621,8 +618,7 @@ select:focus {
   content: '❮';
   position: absolute;
   pointer-events: none;
-  -webkit-transform: rotate(-90deg);
-          transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 
 .radio-wrap label,
@@ -635,12 +631,14 @@ select:focus {
 .powered-by-giphy {
   margin-top: 20px;
   padding-top: 20px;
+  text-align: center;
   border-top: 2px solid rgba(0, 0, 0, 0.2);
 }
 .powered-by-giphy a {
   opacity: .7;
   overflow: hidden;
   display: inline-block;
+  vertical-align: text-bottom;
   transition: opacity .2s ease-out;
 }
 .powered-by-giphy a:hover {
@@ -663,29 +661,15 @@ select:focus {
   margin: -25px 0 0 -25px;
   border-top: 3px solid #51D693;
   border-left: 3px solid #51D693;
-  -webkit-animation: spin .5s forwards infinite linear;
-          animation: spin .5s forwards infinite linear;
-}
-
-@-webkit-keyframes spin {
-  from {
-    -webkit-transform: rotate(0);
-            transform: rotate(0);
-  }
-  to {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-  }
+  animation: spin .5s forwards infinite linear;
 }
 
 @keyframes spin {
   from {
-    -webkit-transform: rotate(0);
-            transform: rotate(0);
+    transform: rotate(0);
   }
   to {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 .testing .staging.hidden {
@@ -694,7 +678,6 @@ select:focus {
   right: 0;
   bottom: 0;
   z-index: 1;
-  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
