@@ -40,7 +40,7 @@ export default class App {
 
     this.initControls();
     window.addEventListener('keyup', e => {
-      if (e.keyCode === 27) {
+      if (e.key === 'Escape') {
         // Close Controls
         this.hideControls();
       }
@@ -135,7 +135,7 @@ export default class App {
         });
         // Append the new gifs to the rotator
         this.appendNewGifs(this.gifs, searchTerm);
-        let termId = searchTerm.replace(/\+/g, '');
+        // let termId = searchTerm.replace(/\+/g, '');
         // this.staging = document.querySelector(`#${termId}`);
         const stagingImages = imagesLoaded(this.staging);
         stagingImages
@@ -149,7 +149,7 @@ export default class App {
               this.rotator.classList.remove('-loading');
             }
           })
-          .on('fail', instance => {
+          .on('fail', () => {
             this.rotator
               .querySelector(`img[data-term="${searchTerm}"]`)
               .remove();
@@ -183,7 +183,6 @@ export default class App {
     // Close it up:
     this.controlsClose.addEventListener('click', e => {
       e.preventDefault();
-      this.controlsClose.blur();
       this.hideControls();
     });
     // Open the controls when you click anywhere
@@ -243,7 +242,6 @@ export default class App {
       this.buildRotator(searchTerm, rating, delayTime);
 
       // Hide the controls
-      this.controlsForm.querySelector('button[type="submit"]').blur();
       this.hideControls();
       // Enter Fullscreen if set
       if (fullscreen) {
@@ -258,6 +256,7 @@ export default class App {
   }
 
   hideControls() {
+    this.controls.querySelector(':focus').blur();
     this.controls.classList.remove('-active');
   }
 }
