@@ -1,0 +1,89 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{ title ? title + ' | ' : '' }Gif Wall</title>
+	</head>
+	<body>
+		<main>
+			<slot />
+		</main>
+
+		<footer>
+			<div class="colophone">
+        <div>
+          built by
+          <a href="https://mattsoria.com" target="_blank" rel="noopener"
+            >matt soria</a
+          >.
+        </div>
+        <div>
+          <a href="http://giphy.com" target="_blank"
+            ><img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/26344/PoweredBy_200px-White_HorizText.png"
+              alt="Powered by Giphy.com"
+          /></a>
+        </div>
+      </div>
+		</footer>
+	</body>
+</html>
+<style is:global>
+	:root {
+		--primary: #555;
+		--accent: #51D693;
+		--accent-focus: #259c60;
+		--border: 2px solid rgba(0, 0, 0, 0.2);
+	}
+
+	*, *:before, *:after {
+		box-sizing: inherit;
+	}
+
+	html {
+		min-height: 100%;
+		box-sizing: border-box;
+	}
+
+	body {
+		margin: 0;
+		display: flex;
+		padding: 20px;
+		font-size: 16px;
+		background: #eee;
+		min-height: 100vh;
+		color: var(--primary);
+		flex-direction: column;
+		accent-color: var(--accent);
+		justify-content: space-between;
+		font-family: 'Space Mono', monospace;
+	}
+
+	main {
+		flex: 1;	
+	}
+
+	footer {
+		display: flex;
+		justify-content: end;
+		padding-inline: 20px;
+		padding-block-start: 20px;
+
+		.colophone {
+			gap: 6px;
+			display: grid;
+		}
+	}
+</style>
