@@ -14,6 +14,7 @@ export default class App {
     this.gifs = [];
     this.interval = null;
     this.apiURL = null;
+    this.apiKey = import.meta.env.GIPHY_API_KEY;
 
     this.init();
   }
@@ -112,7 +113,8 @@ export default class App {
       this.options.limit +
       '&rating=' +
       rating +
-      '&api_key=5nOwP2xmE5kzeVezjD6x9Yj1IfHs1PH5';
+      '&api_key=' +
+      this.apiKey;
     return this.apiURL;
   }
 
