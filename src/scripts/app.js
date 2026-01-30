@@ -5,7 +5,7 @@ export default class App {
     limit: 100,
     gifSize: 'downsized', // Options: original (largest), downsized_large, downsized
     loadCount: 3,
-    testing: false,
+    testing: true,
   };
 
   constructor(element, options) {
@@ -15,8 +15,6 @@ export default class App {
     this.interval = null;
     this.apiKey = this.element.dataset.apiKey;
     this.controlsOpen = true;
-
-    this.init();
   }
 
   init() {
@@ -39,6 +37,7 @@ export default class App {
       document.body.classList.add('testing');
     }
 
+    this.parseUrl();
     this.initControls();
     window.addEventListener('keyup', e => {
       if (e.key === 'Escape') {
@@ -50,21 +49,27 @@ export default class App {
         this.removeGif();
       }
     });
-
-    return this;
   }
 
   parseUrl() {
     // Get Search Terms from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const searchTerm = urlParams.get('q');
-    if (searchTerm) {
-      hideControls();
-      const termId = searchTerm.replace(/\+/g, '');
+    const q = urlParams.get('q');
+    const rating = urlParams.get('rating') ?? 'pg13';
+    const delayTime = urlParams.get('delayTime') ?? '3.5';
+
+    if (q) {
+      const termId = q.replace(/\+/g, '');
       // Fire it up!
       this.staging.id = termId;
-      this.buildRotator(searchTerm, 'pg', 3500);
+      this.controlsForm.querySelector('input[name="q"]').value = q;
+      this.controlsForm.querySelector('select[name="rating"]').value = rating;
+      this.controlsForm.querySelector('input[name="delayTime"]').value =
+        delayTime;
+      this.handleFormSubmit();
     }
+
+    return this;
   }
 
   enterFullScreen() {
@@ -109,10 +114,10 @@ export default class App {
   }
 
   // Build the API URL
-  buildApiURL(searchTerm, rating) {
+  buildApiURL(q, rating) {
     this.apiURL =
       'https://api.giphy.com/v1/gifs/search?q=' +
-      searchTerm +
+      q +
       '&limit=' +
       this.options.limit +
       '&rating=' +
@@ -123,7 +128,7 @@ export default class App {
   }
 
   // Use the giphy API to build the array of gifs
-  buildGifsArray(apiURL, searchTerm, delayTime) {
+  buildGifsArray(apiURL, q, delayTime) {
     this.showSpinner();
     this.rotator.classList.add('-loading');
     // Empty out the gifs array
@@ -140,8 +145,8 @@ export default class App {
           this.gifs.push(gif.images[this.options.gifSize].url);
         });
         // Append the new gifs to the rotator
-        this.appendNewGifs(this.gifs, searchTerm);
-        // let termId = searchTerm.replace(/\+/g, '');
+        this.appendNewGifs(this.gifs, q);
+        // let termId = q.replace(/\+/g, '');
         // this.staging = document.querySelector(`#${termId}`);
         const stagingImages = imagesLoaded(this.staging);
         stagingImages
@@ -156,15 +161,13 @@ export default class App {
             }
           })
           .on('fail', () => {
-            this.rotator
-              .querySelector(`img[data-term="${searchTerm}"]`)
-              .remove();
+            this.rotator.querySelector(`img[data-term="${q}"]`).remove();
             return;
           });
       });
   }
 
-  appendNewGifs(gifs, searchTerm) {
+  appendNewGifs(gifs, q) {
     // Add new gifs to the rotator
     for (let i = 0; i < gifs.length; i++) {
       let gifClass = '';
@@ -174,7 +177,7 @@ export default class App {
       const staging = this.element.querySelector('[data-staging]');
       staging.insertAdjacentHTML(
         'beforeend',
-        `<img src="${this.gifs[i]}" alt="${searchTerm} Gif" ${gifClass} data-term="${searchTerm}">`
+        `<img src="${this.gifs[i]}" alt="${q} Gif" ${gifClass} data-term="${q}">`
       );
     }
   }
@@ -193,9 +196,9 @@ export default class App {
     }
   }
 
-  buildRotator(searchTerm, rating, delayTime) {
-    let apiURL = this.buildApiURL(searchTerm, rating);
-    this.buildGifsArray(apiURL, searchTerm, delayTime);
+  buildRotator(q, rating, delayTime) {
+    let apiURL = this.buildApiURL(q, rating);
+    this.buildGifsArray(apiURL, q, delayTime);
   }
 
   // Initialize the controls
@@ -218,56 +221,56 @@ export default class App {
     // Form submission
     this.controlsForm.addEventListener('submit', e => {
       e.preventDefault();
-      const data = new FormData(this.controlsForm);
-      let searchTerm = data.get('searchTerm');
-      let rating = data.get('rating');
-      let delayTime = data.get('delayTime');
-      let layout = data.get('layout');
-      const fullscreen = data.get('fullscreen');
-
-      // Replace spaces with '+' for the giphy API
-      searchTerm = searchTerm.replace(/\s/g, '+');
-
-      // Defaults
-      if (delayTime === '') {
-        delayTime = 3500;
-      } else {
-        // Convert seconds to milliseconds
-        delayTime = delayTime * 1000;
-      }
-
-      if (searchTerm === '') {
-        searchTerm = 'glitch+art';
-      }
-
-      if (rating === '') {
-        rating = 'pg';
-      }
-
-      // If natural ratio layout is chosen
-      if (layout === 'natural-ratio') {
-        this.rotator.classList.add('natural-ratio');
-      } else if (layout === 'fillscreen') {
-        this.rotator.classList.remove('natural-ratio');
-      }
-
-      const termId = searchTerm.replace(/\+/g, '');
-
-      // Fire it up!
-      window.stop();
-      clearInterval(this.interval);
-      this.staging.innerHTML = '';
-      this.staging.id = termId;
-      this.rotator.innerHTML = '';
-      this.buildRotator(searchTerm, rating, delayTime);
-
-      // Hide the controls
-      this.hideControls();
-      // Enter Fullscreen if set
-      if (fullscreen) {
-        this.enterFullScreen();
-      }
+      this.handleFormSubmit();
     });
+  }
+
+  handleFormSubmit() {
+    const data = new FormData(this.controlsForm);
+    let q = data.get('q') || 'glitch+art';
+    let rating = data.get('rating') || 'pg';
+    let delayTime = data.get('delayTime') || '3.5';
+    let layout = data.get('layout');
+    const fullscreen = data.get('fullscreen');
+
+    // Replace spaces with '+' for the giphy API
+    q = q.replace(/\s/g, '+');
+
+    // Convert seconds to milliseconds
+    const delayTimeConverted = Number(delayTime) * 1000;
+
+    // If natural ratio layout is chosen
+    if (layout === 'natural-ratio') {
+      this.rotator.classList.add('natural-ratio');
+    } else if (layout === 'fillscreen') {
+      this.rotator.classList.remove('natural-ratio');
+    }
+
+    const termId = q.replace(/\+/g, '');
+
+    // Fire it up!
+    window.stop();
+    clearInterval(this.interval);
+    this.staging.innerHTML = '';
+    this.staging.id = termId;
+    this.rotator.innerHTML = '';
+    this.buildRotator(q, rating, delayTimeConverted);
+    this.updateUrl(q, rating, delayTime);
+
+    // Hide the controls
+    this.hideControls();
+    // Enter Fullscreen if set
+    if (fullscreen) {
+      this.enterFullScreen();
+    }
+  }
+
+  updateUrl(q, rating, delayTime) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('q', q);
+    url.searchParams.set('rating', rating);
+    url.searchParams.set('delayTime', delayTime);
+    window.history.pushState({}, '', url.toString());
   }
 
   showControls() {
@@ -280,7 +283,7 @@ export default class App {
   hideControls() {
     this.controlsOpen = false;
     document.body.classList.remove('controls-open');
-    this.controls.querySelector(':focus').blur();
+    this.controls.querySelector(':focus')?.blur();
     this.controls.classList.remove('-active');
   }
 }

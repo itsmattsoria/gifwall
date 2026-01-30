@@ -12,30 +12,22 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
       <header>
         <div>
 					<h1>Gif Wall</h1>
-					<h2>Controls</h2>
 				</div>
       </header>
-      <p>
-        Set the vibe at your party or gathering — bust out the projector and
-        pull this baby up, go full-screen and let 'er rip!
+      <p>Set the vibe at your party or gathering: bust out the projector, pull up this site, go full-screen and let 'er rip!
       </p>
-      <p>
-        <em
-          >After closing, click anywhere on the page to re-open the controls.</em
-        >
-      </p>
-			<p>
-					<em
-							>Press 'x' to remove the current displayed gif from the rotation.</em
-					>
-			</p>
+			<ul>
+				<li>After closing, click anywhere on the page to re-open the controls.</li>
+				<li>Press 'x' to remove the current displayed gif from the rotation.</li>
+				<li>After getting the vibe <em>just</em> right, copy and share the URL for repeat enjoyment.</li>
+			</ul>
       <form id="controlsForm" data-controls-form>
         <div>
-          <label for="searchTerm">search term:</label>
+          <label for="q">search term:</label>
           <input
             type="text"
-            id="searchTerm"
-            name="searchTerm"
+            id="q"
+            name="q"
             placeholder="ex: 'glitch art'"
           />
         </div>
@@ -53,12 +45,12 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 					</div>
 
 					<div class="grow">
-						<label for="delayTime">interval time:</label>
+						<label for="delayTime">interval time (in seconds):</label>
 						<input
 							type="text"
 							id="delayTime"
 							name="delayTime"
-							placeholder="in seconds, ex: '3.5'"
+							placeholder="ex: '3.5'"
 						/>
 					</div>
 				</div>
@@ -106,9 +98,13 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 	let GifWall = new App(element);
 	GifWall.init();
 </script>
-<style is:global lang="scss">
+<style is:global>
 	body.loaded .rotator {
 		opacity: 1;
+	}
+
+	*:focus-visible {
+		outline-offset: 0.35em;
 	}
 
 	main {
@@ -129,10 +125,10 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 	.rotator {
 		inset: 0;
 		opacity: 0;
+		position: fixed;
 		overflow: hidden;
 		max-height: 100vh;
-		position: absolute;
-		background: rgba(0, 0, 0, 0.1);
+		background: rgba(0, 0, 0, 0.9);
 		transition: opacity .2s ease-out;
 		
 		img {
@@ -148,7 +144,7 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 			}
 		}
 
-		// Loading
+		/* Loading */
 		.-loading::before {
 			top: 0;
 			left: 0;
@@ -170,19 +166,19 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 		}
 	}
 
-	// Controls
+	/* Controls */
 	.controls {
 		opacity: 0;
 		width: 100%;
 		padding: 20px;
-		max-width: 600px;
+		max-width: 550px;
 		position: relative;
 		background: #efefef;
 		pointer-events: none;
 		transition: opacity .2s ease-out;
 		border: 2px solid rgba(0, 0, 0, 0.2);
 
-		// Active State
+		/* Active State */
 		&.-active,
 		&:focus-within {
 			opacity: 1;
@@ -214,15 +210,20 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 		}
 
 		h1 {
-			color: #555;
+			color: var(--color-text-dark);
 		}
 		h2 {
-			color: #bbb;
+			color: var(--color-text-light);
 		}
 
-		p {
+		p, li {
 			margin-top: 0;
 			text-wrap: pretty;
+		}
+
+		ul {
+			margin: 0;
+			padding: 0 0 0 1em;
 		}
 
 		form {
@@ -264,22 +265,24 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 
 			button {
 				width: 100%;
-				color: white;
-				font-size: 1rem;
 				cursor: pointer;
 				margin-top: 20px;
-				font-weight: 700;
 				border-radius: 0;
+				font-size: 1.5rem;
 				padding: 10px 20px;
 				font-family: inherit;
 				border: var(--border);
-				outline-offset: 0.35em;
 				background: var(--accent);
+				color: var(--color-text-dark);
 				transition: background .2s ease-out;
 
 				&:hover,
 				&:focus-visible {
 					background: var(--accent-focus);
+				}
+
+				&:active {
+					transform: scale(0.99);
 				}
 			}
 
@@ -290,13 +293,11 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 				border-radius: 0;
 				font-family: inherit;
 				border: var(--border);
-				outline-offset: 0.35em;
 				
 				&[type="text"] {
 					padding: 10px;
 					border-radius: 0;
 					&:focus-visible {
-						outline: none;
 						border-color: var(--accent-focus);
 					}
 				}
@@ -361,7 +362,6 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 				padding: 10px 40px 10px 10px;
 
 				&:focus-visible {
-					outline: none;
 					border-color: var(--accent-focus);
 				}
 			}
@@ -383,16 +383,16 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 
 			&:hover,
 			&:focus-visible {
-				color: #555;
+				background-color: var(--accent);
 			}
 		}
 
-		// @media screen and (min-width: 900px) {
-		// 	top: 50%;
-		// 	left: 50%;
-		// 	position: absolute;
-		// 	transform: translate(-50%, -50%);
-		// }
+		/* @media screen and (min-width: 900px) { */
+		/* 	top: 50%; */
+		/* 	left: 50%; */
+		/* 	position: absolute; */
+		/* 	transform: translate(-50%, -50%); */
+		/* } */
 	}
 
 	.spinner {
