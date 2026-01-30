@@ -13,8 +13,8 @@ export default class App {
     this.options = { ...App.defaults, ...options };
     this.gifs = [];
     this.interval = null;
-    this.apiURL = null;
-    this.apiKey = import.meta.env.GIPHY_API_KEY;
+    this.apiKey = this.element.dataset.apiKey;
+    this.controlsOpen = true;
 
     this.init();
   }
@@ -44,6 +44,10 @@ export default class App {
       if (e.key === 'Escape') {
         // Close Controls
         this.hideControls();
+      }
+
+      if (e.key === 'x' && !this.controlsOpen) {
+        this.removeGif();
       }
     });
 
@@ -175,6 +179,20 @@ export default class App {
     }
   }
 
+  removeGif() {
+    const currentGif = this.rotator.querySelector('img.current');
+    if (currentGif) {
+      let nextGif = currentGif.nextElementSibling;
+      if (nextGif) {
+        nextGif.classList.add('current');
+      } else {
+        nextGif = this.rotator.querySelector('img:first-child');
+        nextGif.classList.add('current');
+      }
+      currentGif.remove();
+    }
+  }
+
   buildRotator(searchTerm, rating, delayTime) {
     let apiURL = this.buildApiURL(searchTerm, rating);
     this.buildGifsArray(apiURL, searchTerm, delayTime);
@@ -253,11 +271,15 @@ export default class App {
   }
 
   showControls() {
+    this.controlsOpen = true;
+    document.body.classList.add('controls-open');
     this.controls.classList.add('-active');
     this.controlsForm.querySelector('input').focus();
   }
 
   hideControls() {
+    this.controlsOpen = false;
+    document.body.classList.remove('controls-open');
     this.controls.querySelector(':focus').blur();
     this.controls.classList.remove('-active');
   }

@@ -16,7 +16,7 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{ title ? title + ' | ' : '' }Gif Wall</title>
 	</head>
-	<body>
+	<body class="controls-open">
 		<main>
 			<slot />
 		</main>
@@ -25,22 +25,13 @@ const { title } = Astro.props;
 			<div class="colophone">
         <div>
           built by
-          <a href="https://mattsoria.com" target="_blank" rel="noopener"
-            >matt soria</a
-          >.
-        </div>
-        <div>
-          <a href="http://giphy.com" target="_blank"
-            ><img
-              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/26344/PoweredBy_200px-White_HorizText.png"
-              alt="Powered by Giphy.com"
-          /></a>
+          <a href="https://mattsoria.com">matt soria</a>.
         </div>
       </div>
 		</footer>
 	</body>
 </html>
-<style is:global>
+<style is:global lang="scss">
 	:root {
 		--primary: #555;
 		--accent: #51D693;
@@ -69,6 +60,11 @@ const { title } = Astro.props;
 		accent-color: var(--accent);
 		justify-content: space-between;
 		font-family: 'Space Mono', monospace;
+
+		&:not(.controls-open) .colophone {
+			opacity: 0;
+			pointer-events: none;
+		}
 	}
 
 	main {
@@ -77,13 +73,24 @@ const { title } = Astro.props;
 
 	footer {
 		display: flex;
-		justify-content: end;
+		position: relative;
 		padding-inline: 20px;
+		justify-content: center;
 		padding-block-start: 20px;
 
 		.colophone {
 			gap: 6px;
+			opacity: 1;
+			color: #fff;
 			display: grid;
+			font-size: 14px;
+			mix-blend-mode: difference;
+			transition: opacity 0.3s ease-out;
+		}
+
+		a {
+			color: inherit;
+			text-underline-offset: 2px;
 		}
 	}
 </style>

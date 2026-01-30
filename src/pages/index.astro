@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 ---
 
 <Layout title="">
-	<div data-app>
+	<div data-app data-api-key={apiKey}>
 		<div class="hidden" data-staging></div>
 		<div class="rotator" data-rotator></div>
 
@@ -20,9 +21,14 @@ import Layout from '../layouts/Layout.astro';
       </p>
       <p>
         <em
-          >After closing, click anywhere on the page to re-open the controls</em
+          >After closing, click anywhere on the page to re-open the controls.</em
         >
       </p>
+			<p>
+					<em
+							>Press 'x' to remove the current displayed gif from the rotation.</em
+					>
+			</p>
       <form id="controlsForm" data-controls-form>
         <div>
           <label for="searchTerm">search term:</label>
@@ -216,6 +222,7 @@ import Layout from '../layouts/Layout.astro';
 
 		p {
 			margin-top: 0;
+			text-wrap: pretty;
 		}
 
 		form {
