@@ -232,6 +232,7 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 			.control-row {
 				gap: 20px;
 				display: flex;
+				flex-wrap: wrap;
 				align-items: start;
 				justify-content: space-between;
 			}
@@ -306,6 +307,7 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 				&[type="checkbox"] {
 					width: 1.5rem;
 					height: 1.5rem;
+					border-radius: 0;
 				}
 			}
 
@@ -356,6 +358,7 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 				font-size: 1rem;
 				border-radius: 0;
 				font-family: inherit;
+				color: var(--primary);
 				border: var(--border);
 				display: inline-block;
 				-webkit-appearance: none;
@@ -377,7 +380,7 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 			background: none;
 			position: absolute;
 			font-family: inherit;
-			color: --var(primary);
+			color: var(--primary);
 			text-decoration: underline;
 			text-underline-offset: 0.2em;
 
