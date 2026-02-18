@@ -4,8 +4,8 @@ export default class App {
   static defaults = {
     limit: 100,
     gifSize: 'downsized', // Options: original (largest), downsized_large, downsized
-    loadCount: 3,
-    testing: true,
+    loadCount: 2,
+    testing: false,
   };
 
   constructor(element, options) {
@@ -13,6 +13,8 @@ export default class App {
     this.options = { ...App.defaults, ...options };
     this.gifs = [];
     this.interval = null;
+    this.abortController = null;
+    this.loadingTextMessages = [];
     this.apiKey = this.element.dataset.apiKey;
     this.controlsOpen = true;
   }
@@ -86,30 +88,72 @@ export default class App {
 
   // Pick a random gif from the rotator and make it the current gif
   gifRotation() {
-    this.rotator = document.querySelector('[data-rotator]');
     const gifs = this.rotator.querySelectorAll('img');
+    if (gifs.length === 0) return;
+
+    const currentGif = this.rotator.querySelector('img.current');
     const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
-    this.rotator.querySelector('img.current').classList.remove('current');
+
+    if (currentGif) {
+      currentGif.classList.remove('current');
+    }
     randomGif.classList.add('current');
   }
 
   runRotator(delayTime) {
-    this.interval = setInterval(this.gifRotation, delayTime);
+    this.interval = setInterval(() => this.gifRotation(), delayTime);
   }
 
   // Add a loading spinner
   showSpinner() {
     this.rotator.insertAdjacentHTML(
       'afterbegin',
-      '<div class="spinner"></div>'
+      `<div id="loading-indicator" class="loading-indicator">
+        <div class="loading-indicator-inner">
+          <div class="spinner"></div>
+          <div class="loading-text" id="loading-text">Gathering gifs...</div>
+        </div>
+      </div>`
+    );
+    this.loadingText = this.rotator.querySelector('#loading-text');
+
+    this.loadingTextMessages.push(
+      setTimeout(() => {
+        this.loadingText.textContent = 'Still gathering...';
+      }, 3000)
+    );
+
+    this.loadingTextMessages.push(
+      setTimeout(() => {
+        this.loadingText.textContent =
+          'Hmm...this is taking longer than expected...';
+      }, 6000)
+    );
+
+    this.loadingTextMessages.push(
+      setTimeout(() => {
+        this.loadingText.textContent =
+          "Are you sure you're connected to the internet?";
+      }, 8000)
+    );
+
+    this.loadingTextMessages.push(
+      setTimeout(() => {
+        this.loadingText.textContent = 'Okay, any moment now...';
+      }, 10000)
     );
   }
 
   // Remove the loading spinner
   hideSpinner() {
-    const spinner = this.rotator.querySelector('.spinner');
+    const spinner = this.rotator.querySelector('#loading-indicator');
     if (spinner) {
       spinner.remove();
+
+      for (let i = 0; i < this.loadingTextMessages.length; i++) {
+        window.clearTimeout(this.loadingTextMessages[i]);
+      }
+      this.loadingTextMessages.length = 0;
     }
   }
 
@@ -127,16 +171,38 @@ export default class App {
     return this.apiURL;
   }
 
+  // Fetch with automatic retry to handle CORS-blocked 425 (Too Early) responses.
+  // The Giphy API sometimes rejects TLS 0-RTT early data with a 425 that lacks
+  // CORS headers, causing the browser to throw a network error instead of
+  // exposing the status code. Retrying after a short delay resolves the issue.
+  fetchWithRetry(url, options, retriesLeft = 3) {
+    return fetch(url, options).catch(error => {
+      if (error.name === 'AbortError' || retriesLeft <= 0) {
+        throw error;
+      }
+      return new Promise(resolve => setTimeout(resolve, 500)).then(() =>
+        this.fetchWithRetry(url, options, retriesLeft - 1)
+      );
+    });
+  }
+
   // Use the giphy API to build the array of gifs
   buildGifsArray(apiURL, q, delayTime) {
+    // Abort any in-flight fetch before starting a new one
+    if (this.abortController) {
+      this.abortController.abort();
+    }
+    this.abortController = new AbortController();
+
     this.showSpinner();
     this.rotator.classList.add('-loading');
     // Empty out the gifs array
     this.gifs = [];
     // Call the API
-    fetch(apiURL, {
+    this.fetchWithRetry(apiURL, {
       method: 'GET',
       redirect: 'follow',
+      signal: this.abortController.signal,
     })
       .then(response => response.json())
       .then(data => {
@@ -146,8 +212,6 @@ export default class App {
         });
         // Append the new gifs to the rotator
         this.appendNewGifs(this.gifs, q);
-        // let termId = q.replace(/\+/g, '');
-        // this.staging = document.querySelector(`#${termId}`);
         const stagingImages = imagesLoaded(this.staging);
         stagingImages
           .on('progress', (imgLoad, image) => {
@@ -156,14 +220,24 @@ export default class App {
             if (imgLoad.progressedCount === this.options.loadCount) {
               // Run the rotator!
               this.runRotator(delayTime);
-              this.hideSpinner();
-              this.rotator.classList.remove('-loading');
+              setTimeout(() => {
+                this.hideSpinner();
+                this.rotator.classList.remove('-loading');
+              }, delayTime);
             }
           })
           .on('fail', () => {
             this.rotator.querySelector(`img[data-term="${q}"]`).remove();
             return;
           });
+      })
+      .catch(error => {
+        if (error.name === 'AbortError') {
+          return;
+        }
+        console.error('Failed to fetch gifs:', error);
+        this.hideSpinner();
+        this.rotator.classList.remove('-loading');
       });
   }
 
@@ -249,7 +323,6 @@ export default class App {
     const termId = q.replace(/\+/g, '');
 
     // Fire it up!
-    window.stop();
     clearInterval(this.interval);
     this.staging.innerHTML = '';
     this.staging.id = termId;

@@ -398,17 +398,29 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 		/* } */
 	}
 
+	.loading-indicator {
+		inset: 0;
+		display: grid;
+		z-index: 1000;
+		position: fixed;
+		text-align: center;
+		place-items: center;
+		pointer-events: none;
+	}
+
+	.loading-text {
+		color: var(--accent);
+		padding-inline: 1rem;
+	}
+
 	.spinner {
-		top: 50%;
-		left: 50%;
-		z-index: 10;
 		width: 50px;
 		height: 50px;
 		border-radius: 50%;
-		position: absolute;
-		margin: -25px 0 0 -25px;
-		border-top: 3px solid #51D693;
-		border-left: 3px solid #51D693;
+		margin-inline: auto;
+		margin-block-end: 1rem;
+		border-top: 3px solid var(--accent);
+		border-left: 3px solid var(--accent);
 		animation: spin .5s forwards infinite linear;
 	}
 
@@ -420,18 +432,20 @@ const apiKey = import.meta.env.PUBLIC_GIPHY_API_KEY;
 			transform: rotate(360deg);
 		}
 	}
-	.testing .staging.hidden {
+	.testing [data-staging].hidden {
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
 		z-index: 1;
-		display: -ms-flexbox;
+		width: 100%;
+		height: auto;
 		display: flex;
+		flex-wrap: wrap;
 		position: absolute;
 		visibility: visible;
 	}
-	.testing .staging.hidden > * {
+	.testing [data-staging].hidden > * {
 		flex-basis: 10%;
 	}
 </style>
